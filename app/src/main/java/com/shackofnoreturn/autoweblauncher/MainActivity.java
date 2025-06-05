@@ -7,7 +7,7 @@ import android.webkit.WebView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String URL = "https://theuselessweb.com/";
+    private static final String URL = "https://www.google.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
