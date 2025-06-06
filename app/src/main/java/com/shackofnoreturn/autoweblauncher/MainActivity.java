@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,14 +22,13 @@ public class MainActivity extends AppCompatActivity {
         // Hide system UI
         enterImmersiveMode();
 
-        WebView webview = new WebView(this);
-        setContentView(webview);
+        // Set up WebView
+        WebView webView = new WebView(this);
+        webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl(URL); // Replace with your desired URL
 
-        WebSettings ws = webview.getSettings();
-        ws.setJavaScriptEnabled(true);
-        ws.setDomStorageEnabled(true);
-
-        webview.loadUrl(URL);
+        setContentView(webView);
     }
 
     private void enterImmersiveMode() {
