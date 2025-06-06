@@ -26,10 +26,10 @@ public class MainActivity extends AppCompatActivity {
         enterImmersiveMode();
 
         // Lock the app if supported
-        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && am != null && !am.isInLockTaskMode()) {
-            startLockTask();
-        }
+        // ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && am != null && !am.isInLockTaskMode()) {
+        //    startLockTask();
+        // }
 
         // Set up WebView
         WebView webView = new WebView(this);
@@ -38,6 +38,17 @@ public class MainActivity extends AppCompatActivity {
         webView.loadUrl(URL); // Replace with your desired URL
 
         setContentView(webView);
+
+        // Prevent Status Bar / Notification Access
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
     }
 
     private void enterImmersiveMode() {
