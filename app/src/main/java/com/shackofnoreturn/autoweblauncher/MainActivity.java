@@ -1,5 +1,8 @@
 package com.shackofnoreturn.autoweblauncher;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,6 +24,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Hide system UI
         enterImmersiveMode();
+
+        // Lock the app if supported
+        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && am != null && !am.isInLockTaskMode()) {
+            startLockTask();
+        }
 
         // Set up WebView
         WebView webView = new WebView(this);
