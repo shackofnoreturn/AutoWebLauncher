@@ -104,4 +104,10 @@ public class MainActivity extends AppCompatActivity {
             enterImmersiveMode();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        // Do nothing to block back button
+    }
+
 }
