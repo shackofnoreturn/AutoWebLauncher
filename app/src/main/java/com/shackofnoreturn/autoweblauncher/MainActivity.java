@@ -1,10 +1,14 @@
 package com.shackofnoreturn.autoweblauncher;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +16,8 @@ import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -20,8 +26,23 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+    private WebView webView;
     private static final String URL = "https://www.google.com/";
 
+    private final BroadcastReceiver networkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isNetworkAvailable()) {
+                webView.loadUrl(URL);
+            }
+        }
+    };
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnected();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,12 +60,31 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Set up WebView
-        WebView webView = new WebView(this);
-        webView.setWebViewClient(new WebViewClient());
+        setContentView(R.layout.activity_main);
+        webView = findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl(URL); // Replace with your desired URL
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                if (!isNetworkAvailable()) {
+                    webView.loadUrl("file:///android_asset/offline.html");
+                }
+            }
 
-        setContentView(webView);
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                if (!isNetworkAvailable()) {
+                    webView.loadUrl("file:///android_asset/offline.html");
+                }
+            }
+        });
+        if (isNetworkAvailable()) {
+            webView.loadUrl(URL);
+        } else {
+            webView.loadUrl("file:///android_asset/offline.html");
+        }
+        registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -110,4 +150,9 @@ public class MainActivity extends AppCompatActivity {
         // Do nothing to block back button
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkReceiver);
+    }
 }
