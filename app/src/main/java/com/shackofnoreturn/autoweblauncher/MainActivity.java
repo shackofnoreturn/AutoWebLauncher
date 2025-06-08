@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
@@ -149,6 +150,19 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         // Do nothing to block back button
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Delay and bring app to front
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }, 1000);
+    }
+
 
     @Override
     protected void onDestroy() {
