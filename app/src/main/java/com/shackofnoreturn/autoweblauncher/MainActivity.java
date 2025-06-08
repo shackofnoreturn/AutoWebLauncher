@@ -63,7 +63,12 @@ public class MainActivity extends AppCompatActivity {
         // Set up WebView
         setContentView(R.layout.activity_main);
         webView = findViewById(R.id.webview);
-        webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setDatabaseEnabled(true);
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
@@ -112,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
-                40,  // height of the top area to block (adjust as needed)
+                10,  // height of the top area to block (adjust as needed)
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                         WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
